@@ -1,5 +1,5 @@
-var gulp = require('gulp');
-var path = require('../routes');
+var gulp = require('gulp'),
+  path = require('../routes');
 
 
 gulp.task('watch', function() {

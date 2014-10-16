@@ -1,9 +1,9 @@
 var path = require('../routes');
 
-var gulp     = require('gulp'),
-    imagemin = require('gulp-imagemin'),
-    svgmin   = require('gulp-svgmin'),
-    changed  = require('gulp-changed');
+var gulp = require('gulp'),
+  imagemin = require('gulp-imagemin'),
+  svgmin = require('gulp-svgmin'),
+  changed = require('gulp-changed');
 
 
 /*

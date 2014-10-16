@@ -1,11 +1,11 @@
 var path = require('../routes');
 
-var gulp    = require('gulp'),
-    sass    = require('gulp-sass'),
-    prefix  = require('gulp-autoprefixer'),
-    rename  = require('gulp-rename'),
-    csslint = require('gulp-csslint'),
-    cssmin  = require('gulp-minify-css');
+var gulp = require('gulp'),
+  sass = require('gulp-sass'),
+  prefix = require('gulp-autoprefixer'),
+  rename = require('gulp-rename'),
+  csslint = require('gulp-csslint'),
+  cssmin = require('gulp-minify-css');
 
 
 /*

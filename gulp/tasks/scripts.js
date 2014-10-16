@@ -1,9 +1,9 @@
 var path = require('../routes');
 
-var gulp   = require('gulp'),
-    concat = require('gulp-concat'),
-    uglify = require('gulp-uglify'),
-    jshint = require('gulp-jshint');
+var gulp = require('gulp'),
+  concat = require('gulp-concat'),
+  uglify = require('gulp-uglify'),
+  jshint = require('gulp-jshint');
 
 
 /*

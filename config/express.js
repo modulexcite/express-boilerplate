@@ -1,39 +1,61 @@
-/**
- * Node and 3rd party packages
+/*
+ |--------------------------------------------------------------------------
+ | Node and 3rd Party Packages
+ |--------------------------------------------------------------------------
  */
-
-var express = require('express');
-var session = require('express-session');
-var morgan = require('morgan');
-var compression = require('compression');
-var serveStatic = require('serve-static');
-var cookieParser = require('cookie-parser');
-var bodyParser = require('body-parser');
-var swig = require('swig');
-var mongoStore = require('connect-mongostore')(session);
+var express = require('express'),
+  session = require('express-session'),
+  morgan = require('morgan'),
+  compression = require('compression'),
+  serveStatic = require('serve-static'),
+  cookieParser = require('cookie-parser'),
+  bodyParser = require('body-parser'),
+  swig = require('swig'),
+  mongoStore = require('connect-mongostore')(session);
 
 var pkg = require('../package.json');
 
 module.exports = function(app, config) {
   var env = app.get('env');
 
-  /**
-   * Compression middleware
-   * Place before express static middleware
+
+  /*
+   |--------------------------------------------------------------------------
+   | View Settings
+   |--------------------------------------------------------------------------
+   */
+  app.engine('html', swig.renderFile);
+  app.set('views', config.root + '/app/views');
+  app.set('view engine', 'html');
+
+
+  /*
+   |--------------------------------------------------------------------------
+   | Compression Middleware
+   |--------------------------------------------------------------------------
+   |
+   | Needs to be added before the static file middleware
+   |
    */
   app.use(compression({
     threshold: 512
   }));
 
-  /**
-   * Static directory middleware
+
+  /*
+   |--------------------------------------------------------------------------
+   | Static File Middleware
+   |--------------------------------------------------------------------------
    */
   app.use(serveStatic(config.root + '/public'));
 
-  /**
-   * Development environment specific settings & middleware
+
+  /*
+   |--------------------------------------------------------------------------
+   | Development Specific Configurations
+   |--------------------------------------------------------------------------
    */
-  if (env === 'development') {
+  if(env === 'development') {
     // http logging
     app.use(morgan('dev'));
 
@@ -43,31 +65,22 @@ module.exports = function(app, config) {
     });
   }
 
-  /**
-   * Express view settings and engine
-   */
-  app.engine('html', swig.renderFile);
-  app.set('views', config.root + '/app/views');
-  app.set('view engine', 'html');
 
-  /**
-   * Cookie parsing middleware
-   * Place before sessions
+  /*
+   |--------------------------------------------------------------------------
+   | Cookie Middleware
+   |--------------------------------------------------------------------------
+   |
+   | Needs to be added before the session middleware
+   |
    */
   app.use(cookieParser());
 
-  /**
-   * Body parsing middleware
-   */
 
-  app.use(bodyParser.urlencoded({
-    extended: true
-  }));
-
-  app.use(bodyParser.json());
-
-  /**
-   * Express session storage via mongo
+  /*
+   |--------------------------------------------------------------------------
+   | Session Storage using MongoDb
+   |--------------------------------------------------------------------------
    */
   app.use(session({
     secret: pkg.name,
@@ -75,4 +88,17 @@ module.exports = function(app, config) {
     resave: true,
     saveUninitialized: true
   }));
+
+
+  /*
+   |--------------------------------------------------------------------------
+   | Request Body Parsing Middleware
+   |--------------------------------------------------------------------------
+   */
+  app.use(bodyParser.urlencoded({
+    extended: true
+  }));
+
+  app.use(bodyParser.json());
+
 }
