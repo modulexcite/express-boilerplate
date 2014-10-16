@@ -12,26 +12,28 @@ global.__app = __filename;
 
 /*
  |--------------------------------------------------------------------------
- | Node and 3rd party packages
+ | Module depencies
  |--------------------------------------------------------------------------
  */
-var fs = require('fs'),
-  express = require('express'),
-  mongoose = require('mongoose');
+var fs = require('fs');
+var app = module.exports = require('express')();
+var mongoose = require('mongoose');
+var http = require('http').Server(app);
+var io = require('socket.io')(http);
 
 
 /*
  |--------------------------------------------------------------------------
- | Port and Environment
+ | Port and environment
  |--------------------------------------------------------------------------
  */
-var env = process.env.NODE_ENV || 'development',
-  port = process.env.PORT || 3000;
+var env = process.env.NODE_ENV || 'development';
+var port = process.env.PORT || 3000;
 
 
 /*
  |--------------------------------------------------------------------------
- | Include Config Base on Environment
+ | Get config based on current environment
  |--------------------------------------------------------------------------
  */
 var config = require('./config')[env];
@@ -39,11 +41,36 @@ var config = require('./config')[env];
 
 /*
  |--------------------------------------------------------------------------
- | Get the Express object
+ | Connect to MongoDB
  |--------------------------------------------------------------------------
  */
-var app = module.exports = express();
+var mongoConnect = function() {
+  var options = {
+    server: {
+      socketOptions: {
+        keepAlive: 1
+      },
+      auto_reconnect: true
+    }
+  };
 
+  mongoose.connect(config.mongooseDb, options, function(err) {
+    if (err) {
+      console.error('MongoDB connection failed - retrying in 2 seconds...', err);
+      setTimeout(mongoConnect, 2000);
+    }
+
+    console.log('Connected to MongoDB successfully.');
+  });
+
+  if (app.get('env') === 'development') {
+    if (config.mongooseDebug) {
+      mongoose.set('debug', true);
+    }
+  }
+};
+
+mongoConnect();
 
 /*
  |--------------------------------------------------------------------------
@@ -59,7 +86,7 @@ fs.readdirSync('./app/models').forEach(function(file) {
 
 /*
  |--------------------------------------------------------------------------
- | Attach Express Middleware
+ | Bootstrap express
  |--------------------------------------------------------------------------
  */
 require('./config/express')(app, config);
@@ -67,19 +94,20 @@ require('./config/express')(app, config);
 
 /*
  |--------------------------------------------------------------------------
- | Load Express Routes
+ | Bootstrap application routes
  |--------------------------------------------------------------------------
  */
 fs.readdirSync('./app/routes').forEach(function(file) {
-  if(~file.indexOf('.js')) {
-    require('./app/routes/' + file)(app, config);
+  if (~file.indexOf('.js')) {
+    require('./app/routes/' + file)(app, io);
   }
 });
 
+
 /*
  |--------------------------------------------------------------------------
- | Spin Up the App
+ | Spin up the application
  |--------------------------------------------------------------------------
  */
-app.listen(port);
+http.listen(port);
 console.log('Successfully started web server on port ' + port + '.');
