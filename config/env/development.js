@@ -1,5 +1,17 @@
 module.exports = {
+
+  /*
+   |--------------------------------------------------------------------------
+   | Basic Mongoose MongoDb Connection Info
+   |--------------------------------------------------------------------------
+   */
   mongooseDb: 'mongodb://localhost/express-boilerplate',
+
+  /*
+   |--------------------------------------------------------------------------
+   | MongoStore MongoDb Connection Info
+   |--------------------------------------------------------------------------
+   */
   mongoStore: {
     db: {
       name: 'express-boilerplate',

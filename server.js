@@ -1,55 +1,85 @@
-/**
- * Globals to be used throughout the app
- * These two specifically help with require statements
+/*
+ |--------------------------------------------------------------------------
+ | Globals to be used throughout the app
+ |--------------------------------------------------------------------------
+ |
+ | These two specifically help with require statements
+ |
  */
 global.__base = __dirname + '/';
 global.__app = __filename;
 
-/**
- * Node and 3rd party packages
- */
-var fs = require('fs');
-var express = require('express');
-var mongoose = require('mongoose');
 
-/**
- * Port and Environment based on process (with fallbacks)
+/*
+ |--------------------------------------------------------------------------
+ | Node and 3rd party packages
+ |--------------------------------------------------------------------------
  */
-var env = process.env.NODE_ENV || 'development';
-var port = process.env.PORT || 3000;
+var fs = require('fs'),
+  express = require('express'),
+  mongoose = require('mongoose');
 
-/**
- * Include our config based on environment
+
+/*
+ |--------------------------------------------------------------------------
+ | Port and Environment
+ |--------------------------------------------------------------------------
+ */
+var env = process.env.NODE_ENV || 'development',
+  port = process.env.PORT || 3000;
+
+
+/*
+ |--------------------------------------------------------------------------
+ | Include Config Base on Environment
+ |--------------------------------------------------------------------------
  */
 var config = require('./config')[env];
 
-/**
- * Our express factory
+
+/*
+ |--------------------------------------------------------------------------
+ | Get the Express object
+ |--------------------------------------------------------------------------
  */
 var app = module.exports = express();
 
-/**
- * Bootstrap models
+
+/*
+ |--------------------------------------------------------------------------
+ | Load Mongoose Models
+ |--------------------------------------------------------------------------
  */
 fs.readdirSync('./app/models').forEach(function(file) {
-  if (~file.indexOf('.js')) {
+  if(~file.indexOf('.js')) {
     require('./app/models/' + file);
   }
 });
 
-/**
- * Bootstrap express middleware
+
+/*
+ |--------------------------------------------------------------------------
+ | Attach Express Middleware
+ |--------------------------------------------------------------------------
  */
 require('./config/express')(app, config);
 
-/**
- * Bootstrap routes
+
+/*
+ |--------------------------------------------------------------------------
+ | Load Express Routes
+ |--------------------------------------------------------------------------
  */
 fs.readdirSync('./app/routes').forEach(function(file) {
-  if (~file.indexOf('.js')) {
+  if(~file.indexOf('.js')) {
     require('./app/routes/' + file)(app, config);
   }
 });
 
+/*
+ |--------------------------------------------------------------------------
+ | Spin Up the App
+ |--------------------------------------------------------------------------
+ */
 app.listen(port);
 console.log('Successfully started web server on port ' + port + '.');
