@@ -47,6 +47,40 @@ var app = module.exports = express();
 
 /*
  |--------------------------------------------------------------------------
+ | Connect to MongoDb
+ |--------------------------------------------------------------------------
+ */
+var mongoConnect = function() {
+  var options = {
+    server: {
+      socketOptions: {
+        keepAlive: 1
+      },
+      auto_reconnect: true
+    }
+  };
+
+  mongoose.connect(config.mongooseDb, options, function(err) {
+    if(err) {
+      console.error('MongoDB connection failed - retrying in 2 seconds...', err);
+      setTimeout(mongoConnect, 2000);
+    }
+    else {
+      console.log('Successfully connected to MongoDb');
+    }
+  });
+
+  if(app.get('env') === 'development') {
+    if(config.mongooseDebug) {
+      mongoose.set('debug', true);
+    }
+  }
+};
+mongoConnect();
+
+
+/*
+ |--------------------------------------------------------------------------
  | Load Mongoose Models
  |--------------------------------------------------------------------------
  */
