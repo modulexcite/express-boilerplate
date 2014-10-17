@@ -65,7 +65,7 @@ var mongoConnect = function() {
   };
 
   mongoose.connect(config.mongooseDb, options, function(err) {
-    if (err) {
+    if(err) {
       console.error('MongoDB connection failed - retrying in 2 seconds...', err);
       setTimeout(mongoConnect, 2000);
     }
@@ -73,8 +73,8 @@ var mongoConnect = function() {
     console.log('Connected to MongoDB successfully.');
   });
 
-  if (app.get('env') === 'development') {
-    if (config.mongooseDebug) {
+  if(app.get('env') === 'development') {
+    if(config.mongooseDebug) {
       mongoose.set('debug', true);
     }
   }
@@ -109,7 +109,7 @@ require('./config/express')(app, config);
  |--------------------------------------------------------------------------
  */
 fs.readdirSync('./app/routes').forEach(function(file) {
-  if (~file.indexOf('.js')) {
+  if(~file.indexOf('.js')) {
     require('./app/routes/' + file)(app, io);
   }
 });
