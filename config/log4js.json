@@ -1,0 +1,25 @@
+{
+    "appenders": [
+        {
+            "type": "clustered",
+            "appenders": [
+                {
+                    "type": "logLevelFilter",
+                    "level": "ERROR",
+                    "appender": {
+                        "type": "dateFile",
+                        "filename": "log/error.log",
+                        "pattern": "-yyyy-MM-dd",
+                        "alwaysIncludePattern": true
+                    }
+                },
+                {
+                    "type": "dateFile",
+                    "filename": "log/access.log",
+                    "pattern": "-yyyy-MM-dd",
+                    "category": "http"
+                }
+            ]
+        }
+    ]
+}
