@@ -3,8 +3,8 @@
  | Node and 3rd Party Packages
  |--------------------------------------------------------------------------
  */
-var path = require('path'),
-  extend = require('util')._extend;
+var path = require('path');
+var extend = require('util')._extend;
 
 
 /*
@@ -12,9 +12,9 @@ var path = require('path'),
  | Get Environment Config Files
  |--------------------------------------------------------------------------
  */
-var dev = require('./env/development'),
-  prod = require('./env/production'),
-  test = require('./env/test');
+var dev = require('./env/development');
+var prod = require('./env/production');
+var test = require('./env/test');
 
 
 /*
@@ -23,8 +23,10 @@ var dev = require('./env/development'),
  |--------------------------------------------------------------------------
  */
 var defaults = {
-  root: path.normalize(__dirname + '/..') // identical to our global __base var
+  root: path.normalize(__dirname + '/..'), // identical to our global __base var
+  mongooseDebug: true
 };
+
 
 /*
  |--------------------------------------------------------------------------
