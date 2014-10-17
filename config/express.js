@@ -7,7 +7,6 @@ var express = require('express');
 var session = require('express-session');
 var morgan = require('morgan');
 var compression = require('compression');
-var serveStatic = require('serve-static');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var swig = require('swig');
@@ -47,7 +46,7 @@ module.exports = function(app, config) {
    | Static File Middleware
    |--------------------------------------------------------------------------
    */
-  app.use(serveStatic(config.root + '/public'));
+  app.use(express.static(config.root + '/public'));
 
 
   /*
@@ -88,7 +87,7 @@ module.exports = function(app, config) {
 
   app.use(bodyParser.json());
 
-  
+
   /*
    |--------------------------------------------------------------------------
    | Session Storage using MongoDb
