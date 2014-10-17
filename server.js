@@ -15,9 +15,10 @@ global.__app = __filename;
  | Node and 3rd party packages
  |--------------------------------------------------------------------------
  */
-var fs = require('fs'),
-  express = require('express'),
-  mongoose = require('mongoose');
+var fs = require('fs');
+var express = require('express');
+var mongoose = require('mongoose');
+var log4js = require('log4js');
 
 
 /*
@@ -25,8 +26,8 @@ var fs = require('fs'),
  | Port and Environment
  |--------------------------------------------------------------------------
  */
-var env = process.env.NODE_ENV || 'development',
-  port = process.env.PORT || 3000;
+var env = process.env.NODE_ENV || 'development';
+var port = process.env.PORT || 3000;
 
 
 /*
@@ -35,6 +36,15 @@ var env = process.env.NODE_ENV || 'development',
  |--------------------------------------------------------------------------
  */
 var config = require('./config')[env];
+
+
+/*
+ |--------------------------------------------------------------------------
+ | Load Logger
+ |--------------------------------------------------------------------------
+ */
+log4js.configure('./config/log4js.json')
+var log = log4js.getLogger('app');
 
 
 /*
@@ -109,6 +119,42 @@ fs.readdirSync('./app/routes').forEach(function(file) {
     require('./app/routes/' + file)(app, config);
   }
 });
+
+
+/*
+ |--------------------------------------------------------------------------
+ | Error Handling
+ |--------------------------------------------------------------------------
+ */
+app.use(function(error, req, res, next) {
+  var status = error.status || 500;
+
+  if(status === 500) {
+    log.error(error.message + '\n' + status + '\n' + error.stack);
+    res.status(status);
+
+    if(app.get('env') === 'development') {
+      res.render('errors/500', {
+        message: error.message,
+        error: error
+      });
+    }
+    else {
+      res.render('errors/500', {
+        message: error.message,
+        error: {}
+      });
+    }
+  }
+  else {
+    res.status(404);
+    res.render('errors/404', {
+      url: req.originalUrl,
+      error: 'Not found'
+    });
+  }
+});
+
 
 /*
  |--------------------------------------------------------------------------
